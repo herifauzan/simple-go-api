@@ -1,0 +1,236 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a simple server to create and get information about Loan service."
+  version: "1.0.0"
+  title: "Loan Service API"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:8010"
+basePath: "/"
+tags:
+- name: "Loan"
+  description: "Everything about loan service"
+  externalDocs:
+    description: "Find out more"
+    url: "http://swagger.io"
+schemes:
+- "https"
+- "http"
+paths:
+  /application:
+    post:
+      tags:
+      - "Loan"
+      summary: "Add a new LOAN to the database"
+      description: ""
+      operationId: "addLoan"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Loan object that needs to be added to the database"
+        required: true
+        schema:
+          $ref: "#/definitions/Application"
+        x-exportParamName: "Body"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/ApplicationResponse"
+        405:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ApplicationResponse"
+  /track:
+    post:
+      tags:
+      - "Loan"
+      summary: "View last 7-days loan"
+      description: ""
+      operationId: "trackLoan"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Date object to return last 7-days includes the date"
+        required: true
+        schema:
+          $ref: "#/definitions/TrackInput"
+        x-exportParamName: "Body"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/TrackResponse"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/ErrorNotFound"
+  /installment:
+    post:
+      tags:
+      - "Loan"
+      summary: "Check the installment plan"
+      description: ""
+      operationId: "viewInstallment"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Installment object needs to define the installment response"
+        required: true
+        schema:
+          $ref: "#/definitions/Installment"
+        x-exportParamName: "Body"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/InstallmentResponse"
+        404:
+          description: "Not Found"
+          schema:
+            $ref: "#/definitions/ErrorNotFound"
+definitions:
+  Application:
+    type: "object"
+    properties:
+      date:
+        type: "string"
+        description: "date in format YYYY-MM-DD"
+      ktp:
+        type: "string"
+        description: "ktp is a string of number (0..9) with length 16"
+      birthdate:
+        type: "string"
+        description: "birth date in format YYYY-MM-DD"
+      gender:
+        type: "string"
+        description: "gender value limited only for 'male' or 'female'"
+      amount:
+        type: "string"
+        description: "amount in Rupiah with only number character allowed (0..9)"
+      period:
+        type: "integer"
+        format: "int32"
+        description: "period in month"
+    example:
+      date: "date"
+      amount: "amount"
+      period: 0
+      birthdate: "birthdate"
+      gender: "gender"
+      ktp: "ktp"
+  ApplicationResponse:
+    type: "object"
+    properties:
+      ktp:
+        type: "string"
+      status:
+        type: "boolean"
+    example:
+      ktp: "ktp"
+      status: true
+  TrackInput:
+    type: "object"
+    properties:
+      date:
+        type: "string"
+        description: "date in format YYYY-MM-DD"
+    example:
+      date: "date"
+  TrackResponse:
+    type: "object"
+    properties:
+      count:
+        type: "integer"
+        format: "unsigned int32"
+      summary:
+        type: "string"
+      7-day-average:
+        type: "string"
+    example:
+      summary: "summary"
+      7-day-average: "7-day-average"
+      count: 0
+  Installment:
+    type: "object"
+    properties:
+      date:
+        type: "string"
+        description: "date in format YYYY-MM-DD"
+      amount:
+        type: "string"
+        description: "amount in Rupiah with only number character allowed (0..9)"
+      period:
+        type: "integer"
+        format: "int32"
+        description: "period in month"
+    example:
+      date: "date"
+      amount: "amount"
+      period: 0
+  InstallmentResponse:
+    type: "object"
+    properties:
+      installments:
+        type: "array"
+        items:
+          $ref: "#/definitions/InstallmentResponse_installments"
+    example:
+      installments:
+      - capital: "capital"
+        total: "total"
+        month: 0
+        interest: "interest"
+        dueDate: "dueDate"
+      - capital: "capital"
+        total: "total"
+        month: 0
+        interest: "interest"
+        dueDate: "dueDate"
+  ErrorNotFound:
+    type: "object"
+    properties:
+      status:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
+  InstallmentResponse_installments:
+    properties:
+      month:
+        type: "integer"
+        format: "int32"
+      dueDate:
+        type: "string"
+      capital:
+        type: "string"
+      interest:
+        type: "string"
+      total:
+        type: "string"
+    example:
+      capital: "capital"
+      total: "total"
+      month: 0
+      interest: "interest"
+      dueDate: "dueDate"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
